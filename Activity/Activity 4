@@ -1,0 +1,43 @@
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+# -------- Load Image --------
+image_path = "/mnt/data/A_photograph_captures_an_outdoor_park_scene_during.png"
+img = cv2.imread(image_path)
+
+if img is None:
+    raise ValueError("Image not found. Check file path.")
+
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# -------- Gaussian Pyramid --------
+level0 = gray
+level1 = cv2.pyrDown(level0)
+level2 = cv2.pyrDown(level1)
+level3 = cv2.pyrDown(level2)
+
+pyramid = [level0, level1, level2, level3]
+titles = ["Level 0 (Original)",
+          "Level 1 (1/2)",
+          "Level 2 (1/4)",
+          "Level 3 (1/8)"]
+
+# -------- Display Pyramid --------
+plt.figure(figsize=(12,8))
+for i in range(4):
+    plt.subplot(2,2,i+1)
+    plt.imshow(pyramid[i], cmap='gray')
+    plt.title(titles[i])
+    plt.axis('off')
+plt.show()
+
+# -------- Edge Detection --------
+plt.figure(figsize=(12,8))
+for i in range(4):
+    edges = cv2.Canny(pyramid[i], 100, 200)
+    plt.subplot(2,2,i+1)
+    plt.imshow(edges, cmap='gray')
+    plt.title("Canny - " + titles[i])
+    plt.axis('off')
+plt.show()
